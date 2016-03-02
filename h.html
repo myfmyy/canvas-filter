@@ -1,0 +1,473 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="index">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="Content/css/pintuer.css" rel="stylesheet" />
+    <script src="Content/js/jquery.js"></script>
+    <script src="Content/js/pintuer.js"></script>
+
+
+    <style>
+        html {
+        }
+
+        body {
+            background-color: #b4daf0;
+        }
+
+        .PortraitEditing {
+            width: 600px;
+            height: 500px;
+            margin: 0 auto;
+            margin-top: 150px;
+            background-color: white;
+            box-shadow: 0px 0px 20px 5px #ccc;
+            position: relative;
+        }
+
+        .PortraitEditing_Top {
+            height: 50px;
+            width: 100%;
+            border-bottom: 1px solid #E6D6D6;
+            border-top: 3px solid #0ae;
+        }
+
+        .Canvas_bg {
+            width: 400px;
+            height: 400px;
+            margin: 5px;
+            position: relative;
+        }
+
+        #Canvas {
+            position: absolute;
+            z-index: 4;
+        }
+
+        #Canvas2 {
+            position: absolute;
+            z-index: 5;
+            top: 0;
+            left: 0;
+        }
+
+        .PortraitEditing_bottom {
+            width: 100%;
+            height: 50px;
+            padding-left: 110px;
+        }
+
+        .imgBtn {
+            position: absolute;
+            margin-left: -100px;
+        }
+
+        .hide_info {
+            position: absolute;
+            top: -1000px;
+            left: 0px;
+        }
+
+        #Choose {
+            position: absolute;
+            border-radius: 50%;
+            top: 0px;
+            left: 0px;
+            z-index: 6;
+            cursor: all-scroll;
+        }
+
+        .button {
+            cursor: pointer;
+        }
+
+        .PortraitEditing_Img {
+            width: 190px;
+            position: absolute;
+            left: 410px;
+            top: 55px;
+        }
+
+        .PortraitEditing_Img1 {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            border:1px solid #0ae;
+        }
+
+        .PortraitEditing_Img2 {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            border:1px solid #0ae;
+        }
+
+        .PortraitEditing_Img3 {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            border:1px solid #0ae;
+        }
+    </style>
+</head>
+<body>
+    <div class="hide_info">
+        <img id="hide_info_img" />
+        <canvas id="Canvas3"></canvas>
+    </div>
+    <div class="PortraitEditing">
+        <div class="PortraitEditing_Top"></div>
+        <div class="Canvas_bg" id="Canvas_bg">
+            <div class="bg_f">
+                <p class="shine">试试将电脑里的文件拖拽到此上传</p>
+
+            </div>
+            <canvas id="Canvas" width="400" height="400"></canvas>
+            <div id="Choose"><div id="Choose_Set"></div></div>
+            <canvas id='Canvas2' width='400' height='400'></canvas>
+        </div>
+        <div class="PortraitEditing_Img float-right">
+            <div class="PortraitEditing_Img1  "></div>
+            <div class="PortraitEditing_Img2  "></div>
+            <div class="PortraitEditing_Img3  "></div>
+        </div>
+        <div class="PortraitEditing_bottom padding-big-left">
+            <div class=" input-file button bg-blue imgBtn">
+                选择图片
+                <input type="file" id="fileInput" accept="image/gif, image/jpeg, image/x-png" size="100" />
+            </div>
+            <button class="button bg-blue" id="img_Big">放大</button>
+            <button class="button bg-blue" id="img_Small">缩小</button>
+            <button class="button bg-blue" id="img_Get">Upload</button>
+        </div>
+    </div>
+    <script>
+
+        var ddddd = new Image();
+        ddddd.src = "Content/img/wwwwww3.png";
+
+        $(function () {
+            DragUpload();
+            FileChange();
+            DragChoose();
+            Choose_Set();
+            $("#img_Get").click(function () {
+                var x2 = getX;
+                var y2 = getY;
+                var xlength = $("#Choose").width();
+                $("#Canvas3").attr("width", xlength);
+                $("#Canvas3").attr("height", xlength);
+                var ic = document.getElementById("Canvas3");
+                icxt = ic.getContext("2d");
+                icxt.clearRect(0, 0, xlength, xlength);//清空画板
+                var iImg = new Image();
+                iImg.src = document.getElementById("Canvas").toDataURL();
+                iImg.onload = function () {
+                    icxt.drawImage(iImg, -x2, -y2);
+                    console.log("file：" + encodeURIComponent(document.getElementById("Canvas3").toDataURL("image/png")));
+                    console.log("jpg：" + document.getElementById("Canvas3").toDataURL("image/png"));
+                    console.log("png：" + document.getElementById("Canvas3").toDataURL("image/png"));
+                    UpAjax = new XMLHttpRequest();
+                    UpAjax.open("post", "这里是服务器接口url", true);
+                    UpAjax.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+                    var postData = new FormData();
+                    postData.append("服务器request的name", document.getElementById("Canvas3").toDataURL("image/png"));
+                    UpAjax.send(postData);
+                    UpAjax.onreadystatechange = function () {
+                        if (UpAjax.status == 200 && UpAjax.readyState == 4) {//完成
+                            //返回数据
+                            var retVla = UpAjax.responseText;//这个是服务器返回值
+                            //eval(retF + "('"+retVla+"')");
+                            
+                        }
+                    }
+                }
+            });
+
+        });
+        var cxt = document.getElementById("Canvas").getContext("2d");
+        var Choose = document.getElementById("Choose");
+
+        function DragUpload() {
+            dom = document.getElementById("Canvas");
+            //取消浏览器默认拖拽事件
+            document.addEventListener("dragleave", function (e) {
+                e.preventDefault();
+            }, false);
+            document.addEventListener("drop", function (e) {
+                e.preventDefault();
+            }, false);
+            document.addEventListener("dragenter", function (e) {
+                e.preventDefault();
+            }, false);
+            document.addEventListener("dragover", function (e) {
+                e.preventDefault();
+            }, false);
+            dom.addEventListener("drop", function (e) {
+                e.preventDefault();
+                var fileList = e.dataTransfer.files;//获取文件对象
+                if (fileList.length == 0) {
+                    return;//没有文件返回
+                }
+                SetImg(fileList[0]);
+            }, false);
+        }
+
+        function FileChange() {
+            document.getElementById("fileInput").addEventListener("change", function () {
+                var ifile = this.files[0];
+                SetImg(ifile);
+            });
+        }
+
+        function SetImg(file) {
+            var img;
+            try {
+                img = window.webkitURL.createObjectURL(file);
+            } catch (e) {//如果是ie将会报错  不支持webkitURL  换成URL即可
+                img = window.URL.createObjectURL(file);
+            }
+
+            var d = document.getElementById("hide_info_img");
+            d.src = img;
+            d.onload = function () {
+                $("#Canvas").css("background-color", "black");
+                $(".PortraitEditing_Img div").css("background-image", "url(" + img + ")");
+                var iWidth = d.width;//图片原始宽度
+                var iHeight = d.height;//高度
+                var LengthProportion = iWidth / iHeight;//比例
+                console.log(LengthProportion);
+                var sWidth = 0;//图像最终宽度
+                var sHeight = 0;//高度
+                var cWidth = document.getElementById("Canvas").width;//画板宽
+                var cHeight = document.getElementById("Canvas").height;//高
+                cxt.clearRect(0, 0, cWidth, cHeight);//清空画板
+
+                var cxtX, cxtY;
+                $("#Choose").removeAttr("style");
+                if (LengthProportion >= 1) {//宽比高长
+                    sWidth = parseInt(cWidth);
+                    sHeight = parseInt(cWidth / LengthProportion);
+
+                    cxtX = 0;
+                    cxtY = (cHeight - sHeight) / 2;
+                    $("#Choose").css("width", sHeight + "px");
+
+                    $("#Choose").attr("max-length", sHeight + "px");
+                } else {//高比宽长
+                    sWidth = parseInt(cHeight * LengthProportion);
+                    sHeight = parseInt(cHeight);
+
+                    cxtX = (cWidth - sWidth) / 2;
+                    cxtY = 0;
+                    $("#Choose").css("width", sWidth + "px");
+
+                    $("#Choose").attr("max-length", sWidth + "px");
+                }
+
+                $("#Choose").css("height", $("#Choose").css("width"));
+                $("#Choose").css("margin-left", cxtX + "px");
+                $("#Choose").css("margin-top", cxtY + "px");
+                $("#Choose").attr("max-left", sWidth);
+                $("#Choose").attr("max-top", sHeight);
+
+                cxt.drawImage(d, cxtX, cxtY, sWidth, sHeight);
+                getImg($("#Choose").width(), cxtX, cxtY, sWidth, sHeight, cxtX, cxtY);
+                Choose.setAttribute("max-length", Choose.style.width.replace("px", ""));
+            }
+        }
+
+        function Choose_Set() {
+            $("#img_Big").click(function () {
+                ResizeChoose(true);
+            });
+            $("#img_Small").click(function () {
+                ResizeChoose(false);
+            });
+        }
+
+        function ResizeChoose(t) {
+            var maxLength = $("#Choose").attr("max-length");
+            var minLength = 100;
+            var iLength = $("#Choose").width();
+            if (t) {
+                if (iLength < maxLength && parseInt(iLength / 100 * 105) < maxLength) {
+                    $("#Choose").css("width", parseInt(iLength / 100 * 105) + "px");
+                    $("#Choose").css("height", parseInt(iLength / 100 * 105) + "px");
+                } else {
+                    $("#Choose").css("width", maxLength + "px");
+                    $("#Choose").css("height", maxLength + "px");
+                }
+            } else {
+                if (iLength > minLength && parseInt(iLength / 100 * 95) > minLength) {
+                    $("#Choose").css("width", parseInt(iLength / 100 * 95) + "px");
+                    $("#Choose").css("height", parseInt(iLength / 100 * 95) + "px");
+                } else {
+                    $("#Choose").css("width", minLength + "px");
+                    $("#Choose").css("height", minLength + "px");
+                }
+            }
+            dom = $("#Choose");
+            getImg(dom.width(), dom.css("margin-left").replace("px", ""), dom.css("margin-top").replace("px", ""), dom.attr("max-left"), dom.attr("max-top"), parseInt(dom.css("margin-left").replace("px", "")) + parseInt(dom.css("left").replace("px", "")), parseInt(dom.css("margin-top").replace("px", "")) + parseInt(dom.css("top").replace("px", "")));
+        }
+
+        function DragChoose() {
+            dom = $("#Choose");
+            var x;
+            var y;
+            var iX;
+            var iY;
+            var iDrag = false;
+            Choose.addEventListener("mousedown", function (e) {
+                iDrag = true;
+                iX = e.pageX - Choose.scrollLeft;
+                iY = e.pageY - Choose.scrollTop;
+                x = dom.position().left;
+                y = dom.position().top;
+            });
+            Choose.addEventListener("mousemove", function (e) {
+                if (iDrag) {
+                    var yX = (e.pageX - Choose.clientLeft) - iX;
+                    var yY = (e.pageY - Choose.clientTop) - iY;
+                    var maxLeft = dom.attr("max-left");
+                    var maxTop = dom.attr("max-top");
+                    if (yX > 0) {
+                        if (x + yX > maxLeft - dom.width()) {
+                            dom.css("left", maxLeft - dom.width() + "px");
+                        } else {
+                            dom.css("left", x + yX + "px");
+                        }
+                    } else {
+                        if (x + yX > 0) {
+                            dom.css("left", x + yX + "px");
+                        } else {
+                            dom.css("left", "0px");
+                        }
+                    }
+                    if (yY > 0) {
+                        if (y + yY > maxTop - dom.width()) {
+                            dom.css("top", maxTop - dom.width() + "px");
+                        } else {
+                            dom.css("top", y + yY + "px");
+                        }
+                    } else {
+                        if (y + yY > 0) {
+                            dom.css("top", y + yY + "px");
+                        } else {
+                            dom.css("ltopeft", "0px");
+                        }
+                    }
+                    getImg(dom.width(), dom.css("margin-left").replace("px", ""), dom.css("margin-top").replace("px", ""), dom.attr("max-left"), dom.attr("max-top"), parseInt(dom.css("margin-left").replace("px", "")) + parseInt(dom.css("left").replace("px", "")), parseInt(dom.css("margin-top").replace("px", "")) + parseInt(dom.css("top").replace("px", "")));
+                }
+            });
+            Choose.addEventListener("mouseup", function (e) {
+                iDrag = false;
+            });
+            Choose.addEventListener("mouseup", function (e) {
+                iDrag = false;
+            });
+            Choose.addEventListener("mouseout", function (e) {
+                iDrag = false;
+            });
+        }
+
+        function getImg(xlength, x1, y1, w, h, x2, y2) {
+            $("#Canvas2").remove();
+            $(".Canvas_bg").append("<canvas id='Canvas2' width='400' height='400'></canvas>");
+            var cxt2 = document.getElementById("Canvas2").getContext("2d");
+            cxt2.clearRect(0, 0, $("#Canvas").width(), $("#Canvas").height());
+            cxt2.drawImage(ddddd, x1, y1, w, h);
+
+            cxt2.lineCap = "round";
+            cxt2.lineWidth = xlength;
+            cxt2.globalCompositeOperation = "source-out";//destination-out
+            cxt2.moveTo(x2 + xlength / 2, y2 + xlength / 2);
+            cxt2.lineTo(x2 + xlength / 2 + 1, y2 + xlength / 2 + 1);
+            cxt2.stroke();
+            getX = x2;
+            getY = y2;
+
+            var iDom = $(".PortraitEditing_Img div");
+
+            for (var i = 0; i < iDom.length; i++) {
+                var isss;
+                var iW = $("#Choose").attr("max-left"), iH = $("#Choose").attr("max-top");
+                if ($("#Choose").attr("max-left") > $("#Choose").attr("max-top")) {
+                    iW = iW / iH * iDom.eq(i).width();
+                    iH = iDom.eq(i).width();
+                    isss = xlength / $("#Choose").attr("max-top");
+                } else if ($("#Choose").attr("max-left") < $("#Choose").attr("max-top")) {
+                    iH = iH / iW * iDom.eq(i).width();
+                    iW = iDom.eq(i).width();
+                    isss = xlength / $("#Choose").attr("max-left");
+                }
+                iH = iH / isss;
+                iW = iW / isss;
+
+                iDom.eq(i).css("background-size", iW + "px " + iH + "px");
+                var iL = -$("#Choose").css("left").replace("px", "") * iW / $("#Choose").attr("max-left");
+                var iT = -$("#Choose").css("top").replace("px", "") * iW / $("#Choose").attr("max-left");
+                iDom.eq(i).css("background-position", iL + "px " + iT + "px");
+            }
+        }
+
+        var getX;
+        var getY;
+        var noX, noY, noLength;
+
+
+    </script>
+    <style>
+        .bg_f {
+            width: 400px;
+            height: 400px;
+            background-color: black;
+            position: absolute;
+            z-index: 0;
+        }
+
+        .shine {
+            background: #222 -webkit-gradient(linear,left top,right top,from(#222),to(#222),color-stop(0.5,#fff)) 0 0 no-repeat;
+            -webkit-background-size: 125px;
+            -webkit-background-clip: text;
+            color: white;
+            font-family: "微软雅黑";
+            font-size: 20px;
+            display: block;
+            text-align:center;
+            margin-top:180px;
+            -webkit-animation: 2s shine infinite;
+        }
+        @-webkit-keyframes shine {
+            0% {
+                background-position: top left;
+                color: rgba(255,255,255,.1);
+            }
+
+            100% {
+                background-position: top right;
+                color: rgba(255,255,255,.1);
+            }
+        }
+    </style>
+</body>
+</html>
