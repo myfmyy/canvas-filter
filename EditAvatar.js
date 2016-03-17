@@ -15,11 +15,11 @@
         this.cursor;
         this._draw = {};
         this.cxt;
+        this.views = [];
     }
 
     window.EditAvatar = EditAvatar;
 
-    
     EditAvatar.prototype.create = function () {
         this.createEditArea();
         this.getPic();
@@ -48,12 +48,29 @@
         this.cursor = document.createElement("div");
         $(this.cursor).css({ "position": "absolute", "cursor": "all-scroll", "border-radius": "50%", "width": "0px", "height": "0px" });
         $(this.editArea).append(this.cursor);
-        this.drag();
-
+        this.initCursor();
     }
 
-    //拖拽
-    EditAvatar.prototype.drag = function () {
+    EditAvatar.prototype.cursorResize = function (re) {
+        if (typeof re === "boolean") {
+            if (re) {
+                this._draw.cursor_length = this._draw.cursor_length / 100 * 105;
+                if (this._draw.cursor_length > this._draw.cursor_maxlength) {
+                    this._draw.cursor_length = this._draw.cursor_maxlength;
+                }
+            } else {
+                this._draw.cursor_length = this._draw.cursor_length / 100 * 95;
+                if (this._draw.cursor_length < this._draw.cursor_minlength) {
+                    this._draw.cursor_length = this._draw.cursor_minlength;
+                }
+            }
+        } else if (typeof re === "number") {
+            this._draw.cursor_length = re;
+        }
+        this.draw();
+    }
+
+    EditAvatar.prototype.initCursor = function () {
         dom = $(this.cursor);
         var x;
         var y;
@@ -79,24 +96,24 @@
                 if (x + yX > win._draw.cursor_maxleft - win._draw.cursor_length) {
                     win._draw.cursor_left = win._draw.cursor_maxleft - win._draw.cursor_length;
                 } else {
-                    win._draw.cursor_left=x + yX;
+                    win._draw.cursor_left = x + yX;
                 }
             } else {
                 if (x + yX > 0) {
-                    win._draw.cursor_left=x + yX;
+                    win._draw.cursor_left = x + yX;
                 } else {
                     win._draw.cursor_left = 0;
                 }
             }
             if (yY > 0) {
                 if (y + yY > win._draw.cursor_maxtop - win._draw.cursor_length) {
-                    win._draw.cursor_left=win.cursor_maxtop - win._draw.cursor_length ;
+                    win._draw.cursor_top = win._draw.cursor_maxtop - win._draw.cursor_length;
                 } else {
-                    win._draw.cursor_top= y + yY ;
+                    win._draw.cursor_top = y + yY;
                 }
             } else {
                 if (y + yY > 0) {
-                    win._draw.cursor_top= y + yY;
+                    win._draw.cursor_top = y + yY;
                 } else {
                     win._draw.cursor_top = 0;
                 }
@@ -108,6 +125,27 @@
         });
         this.cursor.addEventListener("mouseout", function (e) {
             iDrag = false;
+        });
+
+    }
+
+    EditAvatar.prototype.getFile = function (input) {
+        var ee = this;
+        $(input).get(0).addEventListener("change", function () {
+            var file = this.files;
+            if (file.length < 1) {
+                return;
+            }
+            file = file[0];
+            if (file.type.indexOf("image") < 0) {
+                return;
+            }
+            var img = document.createElement("img");
+            img.src = window.URL.createObjectURL ? window.URL.createObjectURL(file) : window.webkitURL.createObjectURL(file);
+            img.onload = function () {
+                ee.editImg = img;
+                ee.init();
+            }
         });
     }
 
@@ -143,10 +181,7 @@
                 ee.editImg = img;
                 ee.init();
             }
-
         });
-
-
     }
 
     //选择图片后初始化
@@ -180,6 +215,7 @@
         this._draw.img_sHeight = sHeight;
 
         this._draw.cursor_maxlength = this._draw.cursor_length;
+        this._draw.cursor_minlength = 30;
         this._draw.cursor_maxleft = sWidth;
         this._draw.cursor_maxtop = sHeight;
         this._draw.cursor_mleft = cxtX;
@@ -190,31 +226,59 @@
         this.draw();
     }
 
-    
+    EditAvatar.prototype.addView = function (viewElem) {
+        var canvas = document.createElement("canvas");
+        canvas.width = $(viewElem).width();
+        canvas.height = $(viewElem).width();
+        $(viewElem).append(canvas);
+        this.views.push({ canvas: canvas, cxt: canvas.getContext("2d") });
+
+    }
+
     EditAvatar.prototype.draw = function () {
+        //底部
         this.cxt.fillStyle = "black";
         this.cxt.fillRect(0, 0, this.editCanvas.width, this.editCanvas.height);
         this.cxt.drawImage(this.editImg, this._draw.img_cxtX, this._draw.img_cxtY, this._draw.img_sWidth, this._draw.img_sHeight);
-        $(this.cursor).css("height", this._draw.cursor_length + "px");
-        $(this.cursor).css("width", this._draw.cursor_length + "px");
-        $(this.cursor).css("margin-left", this._draw.cursor_mleft + "px");
-        $(this.cursor).css("margin-top", this._draw.cursor_mtop + "px");
-        $(this.cursor).css("left", this._draw.cursor_left + "px");
-        $(this.cursor).css("top", this._draw.cursor_top + "px");
-        
+
+        //cursor
+        $(this.cursor).css({ "height": this._draw.cursor_length + "px", "width": this._draw.cursor_length + "px", "margin-left": this._draw.cursor_mleft + "px", "margin-top": this._draw.cursor_mtop + "px", "left": this._draw.cursor_left + "px", "top": this._draw.cursor_top + "px" });
+
+        //cursor canvas
         this.cxt2.globalCompositeOperation = "copy";
         this.cxt2.clearRect(this._draw.img_cxtX, this._draw.img_cxtY, this._draw.img_sWidth, this._draw.img_sHeight);
         this.cxt2.fillStyle = "rgba(255, 255, 255, 0.8)";
         this.cxt2.fillRect(this._draw.img_cxtX, this._draw.img_cxtY, this._draw.img_sWidth, this._draw.img_sHeight);
         this.cxt2.globalCompositeOperation = "destination-out";
         this.cxt2.beginPath();
-        this.cxt2.arc(this._draw.cursor_mleft + this._draw.cursor_left + this._draw.cursor_length / 2, this._draw.cursor_mtop+this._draw.cursor_top + this._draw.cursor_length / 2, this._draw.cursor_length / 2, 0, Math.PI * 2, true);
+        this.cxt2.arc(this._draw.cursor_mleft + this._draw.cursor_left + this._draw.cursor_length / 2, this._draw.cursor_mtop + this._draw.cursor_top + this._draw.cursor_length / 2, this._draw.cursor_length / 2, 0, Math.PI * 2, true);
         this.cxt2.closePath();
         this.cxt2.fill();
 
-
+        //view
+        for (var i = 0; i < this.views.length; i++) {
+            this.views[i].cxt.clearRect(0, 0, this.views[i].canvas.width, this.views[i].canvas.height);
+            var proportion = this.views[i].canvas.width / this._draw.cursor_length;
+            this.views[i].cxt.drawImage(this.editImg, -this._draw.cursor_left * proportion, -this._draw.cursor_top * proportion, this._draw.img_sWidth * proportion, this._draw.img_sHeight * proportion);
+        }
     }
 
+    EditAvatar.prototype.getBase64 = function (type, length) {
+        type = type ? "image/png" : "image/jpeg";
+        length = length ? length : 100;
+
+        var canvas = document.createElement("canvas");
+        canvas.width = length;
+        canvas.height = length;
+        document.body.appendChild(canvas);
+        cxt = canvas.getContext("2d");
+
+        var proportion = length / this._draw.cursor_length;
+        cxt.drawImage(this.editImg, -this._draw.cursor_left * proportion, -this._draw.cursor_top * proportion, this._draw.img_sWidth * proportion, this._draw.img_sHeight * proportion);
+        var ret = canvas.toDataURL(type);
+        document.body.removeChild(canvas);
+        return ret;
+    }
 
 
     return window.EditAvatar;
