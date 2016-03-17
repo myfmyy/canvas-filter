@@ -32,21 +32,21 @@
         this.editCanvas = document.createElement("canvas");
         this.editCanvas.width = $(this.editArea).width();
         this.editCanvas.height = $(this.editArea).height();
-        $(this.editCanvas).css({ "position": "absolute", "pointer-events": "none" });
+        $(this.editCanvas).css({ "position": "absolute" });
         $(this.editArea).append(this.editCanvas);
         this.cxt = this.editCanvas.getContext("2d");
 
         this.editCanvas2 = document.createElement("canvas");
         this.editCanvas2.width = $(this.editArea).width();
         this.editCanvas2.height = $(this.editArea).height();
-        $(this.editCanvas2).css({ "position": "absolute", "pointer-events": "none" });
+        $(this.editCanvas2).css({ "position": "absolute"});
         $(this.editArea).append(this.editCanvas2);
         this.cxt2 = this.editCanvas2.getContext("2d");
 
 
         //cursor
         this.cursor = document.createElement("div");
-        $(this.cursor).css({ "position": "absolute", "cursor": "all-scroll", "border-radius": "50%", "width": "0px", "height": "0px" });
+        $(this.cursor).css({ "position": "absolute", "cursor": "all-scroll", "border-radius": "50%", "width": "0px", "height": "0px", "z-index": "9999" });
         $(this.editArea).append(this.cursor);
         this.initCursor();
     }
