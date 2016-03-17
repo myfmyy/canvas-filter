@@ -6,7 +6,6 @@
     }
 })(function ($) {
 
-    //构造函数
     var EditAvatar = function (editArea) {
         this.editArea = editArea;//编辑区域
         this.editCanvas;//编辑canvas
@@ -26,7 +25,6 @@
 
     }
 
-    //创建编辑区域
     EditAvatar.prototype.createEditArea = function () {
         //canvas
         this.editCanvas = document.createElement("canvas");
@@ -149,7 +147,6 @@
         });
     }
 
-    //获取图片
     EditAvatar.prototype.getPic = function () {
         $(document).on({
             dragleave: function (e) {
@@ -184,7 +181,6 @@
         });
     }
 
-    //选择图片后初始化
     EditAvatar.prototype.init = function () {
         var iWidth = this.editImg.width;//图片原始宽度
         var iHeight = this.editImg.height;//高度
