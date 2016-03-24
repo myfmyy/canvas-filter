@@ -47,6 +47,14 @@
         $(this.cursor).css({ "position": "absolute", "cursor": "all-scroll", "border-radius": "50%", "width": "0px", "height": "0px", "z-index": "9999" });
         $(this.editArea).append(this.cursor);
         this.initCursor();
+        var thi = this;
+        $(this.cursor).hover(function () {
+            thi._draw.cursor_h = true;
+            thi.draw();
+        }, function () {
+            thi._draw.cursor_h = false;
+            thi.draw();
+        });
     }
 
     EditAvatar.prototype.cursorResize = function (re) {
@@ -218,7 +226,7 @@
         this._draw.cursor_mtop = cxtY;
         this._draw.cursor_left = 0;
         this._draw.cursor_top = 0;
-
+        this._draw.cursor_h = false;
         this.draw();
     }
 
@@ -239,6 +247,13 @@
 
         //cursor
         $(this.cursor).css({ "height": this._draw.cursor_length + "px", "width": this._draw.cursor_length + "px", "margin-left": this._draw.cursor_mleft + "px", "margin-top": this._draw.cursor_mtop + "px", "left": this._draw.cursor_left + "px", "top": this._draw.cursor_top + "px" });
+        if (this._draw.cursor_h) {
+            $(this.cursor).css("border-radius", "0");
+            $(this.cursor).css("border", "1px solid black");
+        } else {
+            $(this.cursor).css("border-radius", "50%");
+            $(this.cursor).css("border", "none");
+        }
 
         //cursor canvas
         this.cxt2.globalCompositeOperation = "copy";
