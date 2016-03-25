@@ -247,13 +247,13 @@
 
         //cursor
         $(this.cursor).css({ "height": this._draw.cursor_length + "px", "width": this._draw.cursor_length + "px", "margin-left": this._draw.cursor_mleft + "px", "margin-top": this._draw.cursor_mtop + "px", "left": this._draw.cursor_left + "px", "top": this._draw.cursor_top + "px" });
-        if (this._draw.cursor_h) {
-            $(this.cursor).css("border-radius", "0");
-            $(this.cursor).css("border", "1px solid black");
-        } else {
-            $(this.cursor).css("border-radius", "50%");
-            $(this.cursor).css("border", "none");
-        }
+        //if (this._draw.cursor_h) {
+        //    $(this.cursor).css("border-radius", "0");
+        //    $(this.cursor).css("border", "1px solid black");
+        //} else {
+        //    $(this.cursor).css("border-radius", "50%");
+        //    $(this.cursor).css("border", "none");
+        //}
 
         //cursor canvas
         this.cxt2.globalCompositeOperation = "copy";
