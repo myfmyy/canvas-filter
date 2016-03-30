@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <link href="pintuer.css" rel="stylesheet" />
+    <script src="jquery.js"></script>
+    <script src="../EditAvatar.js"></script>
+    <style>
+        html {
+        }
+
+        body {
+            background-color: #b4daf0;
+        }
+
+        .test {
+            width: 600px;
+            height: 500px;
+            margin: 0 auto;
+            margin-top: 150px;
+            background-color: white;
+            box-shadow: 0px 0px 20px 5px #ccc;
+            position: relative;
+        }
+
+        .test_Top {
+            height: 50px;
+            line-height: 50px;
+            padding-left: 10px;
+            border-bottom: 1px solid #E6D6D6;
+            border-top: 3px solid #0ae;
+        }
+
+        #test_edit {
+            width: 400px;
+            height: 400px;
+            margin: 5px;
+            position: relative;
+        }
+
+        .test_view {
+            width: 190px;
+            position: absolute;
+            left: 410px;
+            top: 55px;
+        }
+
+        #test_view_100 {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            border: 1px solid #0ae;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #test_view_50 {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            border-radius: 50%;
+            background-repeat: no-repeat;
+            border: 1px solid #0ae;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #test_view_30 {
+            width: 30px;
+            height: 30px;
+            margin: 0 auto;
+            margin-top: 50px;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            border: 1px solid #0ae;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .test_bottom {
+            height: 50px;
+        }
+
+        .bg_f {
+            width: 400px;
+            height: 400px;
+            background-color: black;
+            position: absolute;
+            z-index: 0;
+        }
+
+        .shine {
+            background: #222 -webkit-gradient(linear,left top,right top,from(#222),to(#222),color-stop(0.5,#fff)) 0 0 no-repeat;
+            -webkit-background-size: 125px;
+            -webkit-background-clip: text;
+            color: white;
+            font-family: "微软雅黑";
+            font-size: 20px;
+            display: block;
+            text-align: center;
+            margin-top: 180px;
+            -webkit-animation: 2s shine infinite;
+        }
+
+        @-webkit-keyframes shine {
+            0% {
+                background-position: top left;
+                color: rgba(255,255,255,.1);
+            }
+
+            100% {
+                background-position: top right;
+                color: rgba(255,255,255,.1);
+            }
+        }
+    </style>
+    <script>
+        $(function () {
+            //初始化
+            var editAvatar = new EditAvatar($("#test_edit"));
+            
+            $("#zoomin").click(function () {
+                //调整选择区域大小
+                editAvatar.cursorResize(true);//放大
+            });
+            $("#zoomout").click(function () {
+                editAvatar.cursorResize(false);//缩小
+            });
+            //添加view
+            editAvatar.addView($("#test_view_100"));
+            editAvatar.addView($("#test_view_50"));
+            editAvatar.addView($("#test_view_30"));
+            //添加input file
+            editAvatar.getFile($("#getfile"));
+
+            $("#get").click(function () {
+                //获取图片
+                console.log(editAvatar.getBase64());
+            });
+
+            //创建
+            editAvatar.create();
+        });
+    </script>
+</head>
+<body>
+    <div class="test">
+        <div class="test_Top text-black">头像上传</div>
+        <div id="test_edit">
+            <div class="bg_f">
+                <p class="shine">试试将电脑里的图片拖拽到此上传</p>
+            </div>
+        </div>
+        <div class="test_view">
+            <div id="test_view_100"></div>
+            <div id="test_view_50"></div>
+            <div id="test_view_30"></div>
+        </div>
+        <div class="test_bottom padding-big-left">
+            <div class=" input-file button bg-blue float-left margin-small-right">
+                选择图片
+                <input type="file" id="getfile" accept="image/gif, image/jpeg, image/x-png" size="100">
+            </div>
+            <button class="button bg-blue" id="zoomin">放大</button>
+            <button class="button bg-blue" id="zoomout">缩小</button>
+            <button class="button bg-blue" id="get">get</button>
+        </div>
+    </div>
+</body>
+</html>
