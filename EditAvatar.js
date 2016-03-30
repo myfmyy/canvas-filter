@@ -1,4 +1,6 @@
-﻿(function (callback) {
+﻿
+
+(function (callback) {
     if (typeof window.define === "function" && window.define.amd) {
         window.define("EditAvatar", ["jquery"], callback);
     } else {
@@ -6,11 +8,13 @@
     }
 })(function ($) {
 
+
     var EditAvatar = function (editArea) {
         this.editArea = editArea;//编辑区域
         this.editCanvas;//编辑canvas
         this.editCanvas2;//编辑canvas
         this.editImg;//正在编辑的图片
+        this.eImg;//原图
         this.cursor;
         this._draw = {};
         this.cxt;
@@ -150,6 +154,7 @@
             img.src = window.URL.createObjectURL ? window.URL.createObjectURL(file) : window.webkitURL.createObjectURL(file);
             img.onload = function () {
                 ee.editImg = img;
+                ee.eImg = img;
                 ee.init();
             }
         });
@@ -184,6 +189,7 @@
             img.src = window.URL.createObjectURL ? window.URL.createObjectURL(file) : window.webkitURL.createObjectURL(file);
             img.onload = function () {
                 ee.editImg = img;
+                ee.eImg = img;
                 ee.init();
             }
         });
@@ -293,4 +299,18 @@
 
 
     return window.EditAvatar;
+
+
+
+    function clone(myObj) {
+        if (typeof (myObj) != 'object') return myObj;
+        if (myObj == null) return myObj;
+
+        var myNewObj = new Object();
+
+        for (var i in myObj)
+            myNewObj[i] = clone(myObj[i]);
+
+        return myNewObj;
+    }
 });
