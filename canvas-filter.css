@@ -1,0 +1,11 @@
+﻿.imgCanvas {
+    position: absolute;
+}
+
+.filterCanvas {
+    position: absolute;
+}
+
+.filterCanvas_h{
+    cursor:move;
+}
