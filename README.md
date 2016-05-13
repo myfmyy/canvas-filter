@@ -1,33 +1,33 @@
-# EditAvatar
+ï»¿# canvas-filter
 
 
-![](https://raw.githubusercontent.com/myfmyy/EditAvatar/master/test/e.png)
+![](https://raw.githubusercontent.com/myfmyy/EditAvatar/master/test/2.png)
 
-![](https://raw.githubusercontent.com/myfmyy/EditAvatar/master/test/ee.png)
+![](https://raw.githubusercontent.com/myfmyy/EditAvatar/master/test/1.png)
 
 ```js
-//³õÊ¼»¯
-var editAvatar = new EditAvatar($("#test_edit"));
-            
-$("#zoomin").click(function () {
-    //µ÷ÕûÑ¡ÔñÇøÓò´óĞ¡
-    editAvatar.cursorResize(true);//·Å´ó
+var eA = new EditAvatar(document.getElementById("test_a"));
+eA.getFile(document.getElementById("getfile"));
+eA.addView(document.getElementById("test_view_100"));
+eA.addView(document.getElementById("test_view_50"));
+eA.addView(document.getElementById("test_view_30"));
+document.getElementById("get").addEventListener("click", function () {
+    //è·å–å›¾ç‰‡
+    console.log(eA.getBase64());
 });
-$("#zoomout").click(function () {
-    editAvatar.cursorResize(false);//ËõĞ¡
-});
-//Ìí¼Óview
-editAvatar.addView($("#test_view_100"));
-editAvatar.addView($("#test_view_50"));
-editAvatar.addView($("#test_view_30"));
-//Ìí¼Óinput file
-editAvatar.getFile($("#getfile"));
-$("#get").click(function () {
-    //»ñÈ¡Í¼Æ¬
-    console.log(editAvatar.getBase64());
-});
-//´´½¨
-editAvatar.create();
+
+function bs(t) {
+    if (t == "0") {
+        //åŸå›¾
+        eA.editImg = eA.eImg;
+    } else {
+        //é‡ç»˜
+        var Img = new Image();//åˆ›å»ºä¸€ä¸ªæ–°çš„imgï¼Œé¿å…è¦†ç›–åŸå›¾
+        var AlloyImageObj = AlloyImage(eA.editImg);
+        AlloyImageObj.ps(t).replace(Img);
+        eA.editImg = Img;
+    }
+}
 ```
 
 * demo  [idaylog.com/EditAvatar](https://www.idaylog.com/EditAvatar)
