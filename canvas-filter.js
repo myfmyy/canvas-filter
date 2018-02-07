@@ -86,6 +86,10 @@
             var ret = canvas.toDataURL(type);
             document.body.removeChild(canvas);
             return ret;
+        },
+        //获取Blob
+        getBlob: function(type, length) {
+            return getBlobBydataURI(this.getBase64(type, length), type);
         }
     }
 
@@ -308,6 +312,19 @@
             this.views[i].cxt.drawImage(this.editImg, -this.args._filter.X * proportion, -this.args._filter.Y * proportion, this.args._img.iWidth * proportion, this.args._img.iHeight * proportion);
         }
     }
+
+    //base to Blob
+    function getBlobBydataURI(dataURI, type) {
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for (var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], {
+            type: type
+        });
+    }
+
 
     window.EditAvatar = EditAvatar;
     return EditAvatar;
